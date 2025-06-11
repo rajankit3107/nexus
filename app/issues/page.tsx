@@ -1,7 +1,7 @@
 import React from "react";
 
 const IssuePage = () => {
-  return <div>IssuePage</div>;
+  return <div></div>;
 };
 
 export default IssuePage;
