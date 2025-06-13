@@ -35,6 +35,17 @@ const NewIssuePage = () => {
     resolver: zodResolver(createIssueSchema), //resolver is used when the user interacts with the form for client side validation
   });
 
+  const onSubmit = handleSubmit(async (data) => {
+    try {
+      setIsSubmitting(true);
+      await axios.post("/api/issues", data);
+      router.push("/issues");
+    } catch (error) {
+      setIsSubmitting(false);
+      setError("An unexpected error occurred!");
+    }
+  });
+
   return (
     <div className="max-w-xl">
       {error && (
@@ -43,19 +54,7 @@ const NewIssuePage = () => {
         </Callout.Root>
       )}
 
-      <form
-        className="space-y-3"
-        onSubmit={handleSubmit(async (data) => {
-          try {
-            setIsSubmitting(true);
-            await axios.post("/api/issues", data);
-            router.push("/issues");
-          } catch (error) {
-            setIsSubmitting(false);
-            setError("An unexpected error occurred!");
-          }
-        })}
-      >
+      <form className="space-y-3" onSubmit={onSubmit}>
         <Box maxWidth="600px">
           <TextField.Root size="3" placeholder="Title" {...register("title")} />
           <ErrorMessage>{errors.title?.message}</ErrorMessage>
@@ -71,7 +70,7 @@ const NewIssuePage = () => {
           />
           <ErrorMessage>{errors.description?.message}</ErrorMessage>
         </Box>
-        <Button>
+        <Button disabled={isSubmitting}>
           Create
           {isSubmitting && <Spinner />}
         </Button>
