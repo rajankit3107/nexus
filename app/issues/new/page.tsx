@@ -1,45 +1,75 @@
 "use client";
 
-import { Box, Button, TextArea, TextField } from "@radix-ui/themes";
-import SimpleMDE from "react-simplemde-editor";
+import { Box, Button, Callout, Text, TextField } from "@radix-ui/themes";
+import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
-import React from "react";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { createIssueSchema } from "@/app/validationSchemas";
+import { z } from "zod";
+import ErrorMessage from "@/app/components/ErrorMessage";
 
-interface IssueForm {
-  title: string;
-  description: string;
-}
+const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
+  ssr: false,
+});
+
+type IssueForm = z.infer<typeof createIssueSchema>;
 
 const NewIssuePage = () => {
   const router = useRouter();
-  const { register, control, handleSubmit } = useForm<IssueForm>();
+  const {
+    register,
+    control,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<IssueForm>({
+    // it is used during the compile time <issueForm> to check the type
+
+    resolver: zodResolver(createIssueSchema), //resolver is used when the user interacts with the form for client side validation
+  });
+
+  const [error, setError] = useState("");
 
   return (
-    <form
-      className="space-y-3"
-      onSubmit={handleSubmit(async (data) => {
-        await axios.post("/api/issues", data);
-        router.push("/issues");
-      })}
-    >
-      <Box maxWidth="600px">
-        <TextField.Root size="3" placeholder="Title" {...register("title")} />
-      </Box>
-      <Box maxWidth="600px">
-        {/* since we cant use register with simplemde, so we used controller */}
-        <Controller
-          name="description"
-          control={control}
-          render={({ field }) => (
-            <SimpleMDE placeholder="Description" {...field} />
-          )}
-        />
-      </Box>
-      <Button>Create</Button>
-    </form>
+    <div className="max-w-xl">
+      {error && (
+        <Callout.Root color="red" className="mb-5 ">
+          <Callout.Text>{error}</Callout.Text>
+        </Callout.Root>
+      )}
+
+      <form
+        className="space-y-3"
+        onSubmit={handleSubmit(async (data) => {
+          try {
+            await axios.post("/api/issues", data);
+            router.push("/issues");
+          } catch (error) {
+            setError("An unexpected error occurred!");
+          }
+        })}
+      >
+        <Box maxWidth="600px">
+          <TextField.Root size="3" placeholder="Title" {...register("title")} />
+          <ErrorMessage>{errors.title?.message}</ErrorMessage>
+        </Box>
+        <Box maxWidth="600px">
+          {/* since we cant use register with simplemde, so we used controller */}
+          <Controller
+            name="description"
+            control={control}
+            render={({ field }) => (
+              <SimpleMDE placeholder="Description" {...field} />
+            )}
+          />
+          <ErrorMessage>{errors.description?.message}</ErrorMessage>
+        </Box>
+        <Button>Create</Button>
+      </form>
+    </div>
   );
 };
 
