@@ -1,0 +1,44 @@
+{
+  "name": "nexus",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@hookform/resolvers": "^5.1.1",
+    "@prisma/client": "^6.7.0",
+    "@radix-ui/themes": "^3.2.1",
+    "axios": "^1.9.0",
+    "classnames": "^2.5.1",
+    "delay": "^6.0.0",
+    "easymde": "^2.20.0",
+    "next": "15.3.3",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "react-hook-form": "^7.57.0",
+    "react-icons": "^5.5.0",
+    "react-loading-skeleton": "^3.5.0",
+<<<<<<< HEAD
+    "react-markdown": "^10.1.0",
+=======
+>>>>>>> eddcee41dedbdcecd937d3af7b27a388a52ce05a
+    "react-simplemde-editor": "^5.2.0",
+    "zod": "^3.25.61"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@tailwindcss/postcss": "^4",
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.3.3",
+    "prisma": "^6.7.0",
+    "tailwindcss": "^4",
+    "typescript": "^5"
+  }
+}
