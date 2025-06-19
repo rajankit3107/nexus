@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Button, Callout, Text, TextField } from "@radix-ui/themes";
+import { Box, Button, Callout, TextField } from "@radix-ui/themes";
 import dynamic from "next/dynamic";
 import { useForm, Controller } from "react-hook-form";
 import axios from "axios";
@@ -42,7 +42,9 @@ const NewIssuePage = () => {
       router.push("/issues");
     } catch (error) {
       setIsSubmitting(false);
-      setError("An unexpected error occurred!");
+      setError(
+        error instanceof Error ? error.message : "An unexpected error occurred!"
+      );
     }
   });
 
