@@ -1,9 +1,8 @@
-import IssueStatusBadge from "@/app/components/IssueStatusBadge";
 import { prisma } from "@/prisma/client";
-import { Box, Button, Card, Flex, Grid, Heading } from "@radix-ui/themes";
+import { Box, Card, Grid } from "@radix-ui/themes";
 import { notFound } from "next/navigation";
-import { Pencil2Icon } from "@radix-ui/react-icons";
-import Link from "next/link";
+import EditIssueButton from "./EditIssueButton";
+import IssueDetails from "./IssueDetails";
 
 interface issueDetailProps {
   params: Promise<{ id: string }> | { id: string }; // Type might be stricter in future Next.js versions
@@ -27,20 +26,13 @@ const IssueDetailPage = async ({ params }: issueDetailProps) => {
   return (
     <Grid columns={{ initial: "1", md: "2" }} gap="5">
       <Box>
-        <Heading>{issue.title}</Heading>
-        <Flex className="flex space-x-3 my-2">
-          <IssueStatusBadge status={issue.status} />
-          <p className="mt-[-3px]">{issue.createdAt.toDateString()}</p>
-        </Flex>
+        <IssueDetails issue={issue} />
         <Card>
           <p>{issue.description}</p>
         </Card>
       </Box>
       <Box>
-        <Button>
-          <Pencil2Icon />
-          <Link href={`/issues/${issue.id}/edit`}>Edit Issue</Link>
-        </Button>
+        <EditIssueButton issueId={issue.id} />
       </Box>
     </Grid>
   );
