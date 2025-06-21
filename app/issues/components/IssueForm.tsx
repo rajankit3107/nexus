@@ -16,9 +16,9 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
-type IssueForm = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof createIssueSchema>;
 
-const NewIssuePage = () => {
+const IssueForm = () => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -28,7 +28,7 @@ const NewIssuePage = () => {
     control,
     handleSubmit,
     formState: { errors },
-  } = useForm<IssueForm>({
+  } = useForm<IssueFormData>({
     // it is used during the compile time <issueForm> to check the type
 
     resolver: zodResolver(createIssueSchema), //resolver is used when the user interacts with the form for client side validation
@@ -80,4 +80,4 @@ const NewIssuePage = () => {
   );
 };
 
-export default NewIssuePage;
+export default IssueForm;
