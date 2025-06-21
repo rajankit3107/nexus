@@ -3,6 +3,7 @@
 import { ErrorMessage, Spinner } from "@/app/components";
 import { createIssueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Issue } from "@prisma/client";
 import { Box, Button, Callout, TextField } from "@radix-ui/themes";
 import axios from "axios";
 import "easymde/dist/easymde.min.css";
@@ -16,9 +17,13 @@ const SimpleMDE = dynamic(() => import("react-simplemde-editor"), {
   ssr: false,
 });
 
+interface Props {
+  issue?: Issue;
+}
+
 type IssueFormData = z.infer<typeof createIssueSchema>;
 
-const IssueForm = () => {
+const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
   const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -57,12 +62,18 @@ const IssueForm = () => {
 
       <form className="space-y-3" onSubmit={onSubmit}>
         <Box maxWidth="600px">
-          <TextField.Root size="3" placeholder="Title" {...register("title")} />
+          <TextField.Root
+            defaultValue={issue?.title}
+            size="3"
+            placeholder="Title"
+            {...register("title")}
+          />
           <ErrorMessage>{errors.title?.message}</ErrorMessage>
         </Box>
         <Box maxWidth="600px">
           {/* since we cant use register with simplemde, so we used controller */}
           <Controller
+            defaultValue={issue?.description}
             name="description"
             control={control}
             render={({ field }) => (
