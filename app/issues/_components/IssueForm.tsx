@@ -1,7 +1,7 @@
 "use client";
 
 import { ErrorMessage, Spinner } from "@/app/components";
-import { createIssueSchema } from "@/app/validationSchemas";
+import { IssueSchema } from "@/app/validationSchemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Issue } from "@prisma/client";
 import { Box, Button, Callout, TextField } from "@radix-ui/themes";
@@ -21,7 +21,7 @@ interface Props {
   issue?: Issue;
 }
 
-type IssueFormData = z.infer<typeof createIssueSchema>;
+type IssueFormData = z.infer<typeof IssueSchema>;
 
 const IssueForm = ({ issue }: Props) => {
   const router = useRouter();
@@ -36,13 +36,17 @@ const IssueForm = ({ issue }: Props) => {
   } = useForm<IssueFormData>({
     // it is used during the compile time <issueForm> to check the type
 
-    resolver: zodResolver(createIssueSchema), //resolver is used when the user interacts with the form for client side validation
+    resolver: zodResolver(IssueSchema), //resolver is used when the user interacts with the form for client side validation
   });
 
   const onSubmit = handleSubmit(async (data) => {
     try {
       setIsSubmitting(true);
-      await axios.post("/api/issues", data);
+      if (issue) {
+        await axios.patch(`/api/issues/${issue.id}`, data);
+      } else {
+        await axios.post("/api/issues", data);
+      }
       router.push("/issues");
     } catch (error) {
       setIsSubmitting(false);
@@ -83,7 +87,7 @@ const IssueForm = ({ issue }: Props) => {
           <ErrorMessage>{errors.description?.message}</ErrorMessage>
         </Box>
         <Button disabled={isSubmitting}>
-          Create
+          {issue ? "Update" : "Create"}
           {isSubmitting && <Spinner />}
         </Button>
       </form>
